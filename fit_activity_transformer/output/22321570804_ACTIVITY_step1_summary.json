@@ -1,0 +1,29 @@
+{
+  "message_count": 4542,
+  "original_record_count": 1414,
+  "filtered_record_count": 1414,
+  "pause_count": 4,
+  "removed_seconds": 134,
+  "original_diff_counts": {
+    "1.0": 1409,
+    "8.0": 1,
+    "13.0": 1,
+    "19.0": 1,
+    "98.0": 1
+  },
+  "normalized_diff_counts": {
+    "1.0": 1413
+  },
+  "first_pause": {
+    "start_time": "2026-03-28T00:33:21+00:00",
+    "end_time": "2026-03-28T00:34:59+00:00",
+    "gap_seconds": 98.0,
+    "removed_seconds": 97,
+    "start_distance_m": 351.88,
+    "end_distance_m": 351.88,
+    "start_latitude": 31.101529821753502,
+    "start_longitude": 121.02952223271132,
+    "end_latitude": 31.10158053226769,
+    "end_longitude": 121.02952558547258
+  }
+}

@@ -84,7 +84,18 @@ RECORD_FIELDS = {
 
 
 class FitMessageMapper:
+    """将底层 FIT 消息映射为业务层活动模型。"""
+
     def map_messages_to_activity(self, messages: list[FitMessage]) -> ActivityModel:
+        """把消息列表聚合成完整的活动对象。
+
+        参数:
+            messages: 按文件顺序解析得到的 FIT 消息列表。
+
+        返回:
+            包含 metadata、records、laps、session 的活动模型。
+        """
+
         metadata = ActivityMetadata()
         records: list[RecordPoint] = []
         laps: list[LapSummary] = []
@@ -121,6 +132,15 @@ class FitMessageMapper:
         )
 
     def summarize_activity(self, activity: ActivityModel) -> dict[str, Any]:
+        """生成活动摘要，便于写入 JSON 或命令行展示。
+
+        参数:
+            activity: 已完成业务映射的活动对象。
+
+        返回:
+            适合序列化的摘要字典。
+        """
+
         records = activity.records
         first_record = records[0] if records else None
         last_record = records[-1] if records else None
@@ -137,6 +157,15 @@ class FitMessageMapper:
         }
 
     def records_for_visualization(self, activity: ActivityModel) -> list[dict[str, Any]]:
+        """提取可视化所需的逐秒记录字段。
+
+        参数:
+            activity: 已完成业务映射的活动对象。
+
+        返回:
+            可直接写入 CSV 或前端图表的数据行列表。
+        """
+
         if not activity.records:
             return []
         start_time = activity.records[0].timestamp
@@ -162,6 +191,16 @@ class FitMessageMapper:
         return rows
 
     def _merge_metadata(self, metadata: ActivityMetadata, message: FitMessage) -> ActivityMetadata:
+        """把 file_id 消息合并到活动元数据中。
+
+        参数:
+            metadata: 当前累计的元数据对象。
+            message: file_id 类型的 FIT 消息。
+
+        返回:
+            更新后的元数据对象。
+        """
+
         values = self._map_fields(message.fields_by_number, FILE_ID_FIELDS)
         if values.get("time_created") is not None:
             values["time_created"] = self._as_timestamp(values["time_created"])
@@ -170,6 +209,15 @@ class FitMessageMapper:
         return metadata
 
     def _map_session(self, message: FitMessage) -> SessionSummary:
+        """将 session 消息映射为会话摘要对象。
+
+        参数:
+            message: session 类型的 FIT 消息。
+
+        返回:
+            会话摘要对象。
+        """
+
         values = self._map_fields(message.fields_by_number, SESSION_FIELDS)
         return SessionSummary(
             start_time=self._as_timestamp(values.get("start_time")),
@@ -194,6 +242,15 @@ class FitMessageMapper:
         )
 
     def _map_lap(self, message: FitMessage) -> LapSummary:
+        """将 lap 消息映射为圈段摘要对象。
+
+        参数:
+            message: lap 类型的 FIT 消息。
+
+        返回:
+            圈段摘要对象。
+        """
+
         values = self._map_fields(message.fields_by_number, LAP_FIELDS)
         return LapSummary(
             start_time=self._as_timestamp(values.get("start_time")),
@@ -216,6 +273,15 @@ class FitMessageMapper:
         )
 
     def _map_record(self, message: FitMessage) -> RecordPoint:
+        """将 record 消息映射为逐点记录对象。
+
+        参数:
+            message: record 类型的 FIT 消息。
+
+        返回:
+            记录点对象。
+        """
+
         values = self._map_fields(message.fields_by_number, RECORD_FIELDS)
         return RecordPoint(
             timestamp=self._as_timestamp(values.get("timestamp")),
@@ -235,6 +301,16 @@ class FitMessageMapper:
         )
 
     def _map_fields(self, values_by_number: dict[int, Any], fields: dict[int, str]) -> dict[str, Any]:
+        """按字段字典把编号映射为具名字段。
+
+        参数:
+            values_by_number: 原始字段编号到值的映射。
+            fields: 字段编号到业务字段名的映射表。
+
+        返回:
+            具名字段字典。
+        """
+
         return {
             field_name: values_by_number[field_number]
             for field_number, field_name in fields.items()
@@ -242,11 +318,29 @@ class FitMessageMapper:
         }
 
     def _as_position(self, value: Any) -> float | None:
+        """将 FIT 半圆坐标转换为经纬度角度值。
+
+        参数:
+            value: 原始半圆坐标。
+
+        返回:
+            十进制度数；若为空则返回 None。
+        """
+
         if value is None:
             return None
         return float(value) * SEMICIRCLE_TO_DEGREES
 
     def _as_timestamp(self, value: Any) -> datetime | None:
+        """将原始时间值转换为时间对象。
+
+        参数:
+            value: datetime 或 FIT epoch 秒数。
+
+        返回:
+            UTC 时间对象；若为空则返回 None。
+        """
+
         if value is None:
             return None
         if isinstance(value, datetime):
@@ -254,48 +348,129 @@ class FitMessageMapper:
         return FIT_EPOCH + timedelta(seconds=int(value))
 
     def _as_altitude(self, value: Any) -> float | None:
+        """将标准海拔原始值转换为米。
+
+        参数:
+            value: FIT 协议中的原始海拔值。
+
+        返回:
+            米制海拔；若为空则返回 None。
+        """
+
         if value is None:
             return None
         return float(value) / 5 - 500
 
     def _as_enhanced_altitude(self, value: Any) -> float | None:
+        """将增强海拔原始值转换为米。
+
+        参数:
+            value: FIT 协议中的增强海拔原始值。
+
+        返回:
+            米制海拔；若为空则返回 None。
+        """
+
         if value is None:
             return None
-        return float(value) / 5
+        return float(value) / 5 - 500
 
     def _as_speed(self, value: Any) -> float | None:
+        """将原始速度值转换为米每秒。
+
+        参数:
+            value: FIT 协议中的原始速度值。
+
+        返回:
+            米每秒速度；若为空则返回 None。
+        """
+
         if value is None:
             return None
         return float(value) / 1000
 
     def _as_distance(self, value: Any) -> float | None:
+        """将原始距离值转换为米。
+
+        参数:
+            value: FIT 协议中的原始距离值。
+
+        返回:
+            米制距离；若为空则返回 None。
+        """
+
         if value is None:
             return None
         return float(value) / 100
 
     def _as_seconds(self, value: Any) -> float | None:
+        """将毫秒制时长转换为秒。
+
+        参数:
+            value: FIT 协议中的原始时长值。
+
+        返回:
+            秒数；若为空则返回 None。
+        """
+
         if value is None:
             return None
         return float(value) / 1000
 
     def _as_int(self, value: Any) -> int | None:
+        """将数值安全转换为整数。
+
+        参数:
+            value: 原始字段值。
+
+        返回:
+            整数值；若为空则返回 None。
+        """
+
         if value is None:
             return None
         return int(value)
 
     def _first_non_none(self, *values: Any) -> Any:
+        """返回参数列表中第一个非空值。
+
+        参数:
+            *values: 待依次检查的候选值。
+
+        返回:
+            第一个非 None 的值；若全部为空则返回 None。
+        """
+
         for value in values:
             if value is not None:
                 return value
         return None
 
     def _serialize_mapping(self, values: dict[str, Any]) -> dict[str, Any]:
+        """递归序列化字典中的时间等复杂类型。
+
+        参数:
+            values: 待序列化字典。
+
+        返回:
+            已转为基础类型的新字典。
+        """
+
         serialized: dict[str, Any] = {}
         for key, value in values.items():
             serialized[key] = self._serialize_value(value)
         return serialized
 
     def _serialize_value(self, value: Any) -> Any:
+        """将单个值递归转换为可 JSON 序列化对象。
+
+        参数:
+            value: 待序列化的任意值。
+
+        返回:
+            可安全写入 JSON 的基础类型值。
+        """
+
         if isinstance(value, datetime):
             return value.isoformat()
         if isinstance(value, timedelta):

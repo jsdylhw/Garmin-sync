@@ -46,6 +46,15 @@ INVALID_VALUES = {
 
 @dataclass
 class FieldDefinition:
+    """描述单个字段在消息体中的二进制布局。
+
+    参数:
+        number: FIT 协议中的字段编号。
+        size: 字段占用的字节长度。
+        base_type: 字段基础类型编号。
+        offset: 字段在消息记录中的字节偏移。
+    """
+
     number: int
     size: int
     base_type: int
@@ -54,6 +63,15 @@ class FieldDefinition:
 
 @dataclass
 class MessageDefinition:
+    """描述某个 local message 的结构定义。
+
+    参数:
+        local_number: 本地消息编号。
+        global_number: FIT profile 中的全局消息编号。
+        endian: 当前定义使用的大端或小端标记。
+        fields: 当前消息包含的字段定义列表。
+    """
+
     local_number: int
     global_number: int
     endian: str
@@ -62,6 +80,15 @@ class MessageDefinition:
 
 @dataclass
 class FitMessage:
+    """表示解码后的单条 FIT 数据消息。
+
+    参数:
+        global_number: 消息的全局编号，用于区分 file_id、session、record 等类型。
+        local_number: 消息在当前文件中的本地编号。
+        fields_by_number: 普通字段编号到字段值的映射。
+        developer_fields: 开发者自定义字段映射，当前版本暂未深入解析。
+    """
+
     global_number: int
     local_number: int
     fields_by_number: dict[int, Any]
@@ -69,6 +96,15 @@ class FitMessage:
 
 
 def crc16(data: bytes | bytearray) -> int:
+    """计算 FIT 文件使用的 CRC16 校验值。
+
+    参数:
+        data: 需要参与校验的原始字节序列。
+
+    返回:
+        计算得到的 16 位 CRC 整数。
+    """
+
     crc = 0
     for byte in data:
         crc ^= byte
@@ -82,12 +118,29 @@ def crc16(data: bytes | bytearray) -> int:
 
 
 class FitReader:
+    """负责读取 FIT 二进制文件并解析为消息对象列表。"""
+
     def read_file(self, path: str | Path) -> list[FitMessage]:
+        """读取并解析指定 FIT 文件。
+
+        参数:
+            path: 输入 FIT 文件路径。
+
+        返回:
+            按文件顺序解析得到的消息列表。
+        """
+
         buffer = Path(path).read_bytes()
         self._validate_file(buffer)
         return self._parse_messages(buffer)
 
     def _validate_file(self, buffer: bytes) -> None:
+        """校验 FIT 文件头与整文件 CRC。
+
+        参数:
+            buffer: FIT 文件的完整字节内容。
+        """
+
         if buffer[8:12] != b".FIT":
             raise ValueError("输入文件不是合法的 FIT 文件")
         header_size = buffer[0]
@@ -101,6 +154,15 @@ class FitReader:
             raise ValueError("FIT 文件 CRC 校验失败")
 
     def _parse_messages(self, buffer: bytes) -> list[FitMessage]:
+        """遍历数据区并将定义消息、数据消息解码为对象。
+
+        参数:
+            buffer: FIT 文件完整字节内容。
+
+        返回:
+            解码后的消息列表。
+        """
+
         header_size = buffer[0]
         data_size = struct.unpack_from("<I", buffer, 4)[0]
         data_end = header_size + data_size
@@ -156,6 +218,17 @@ class FitReader:
         return messages
 
     def _parse_definition(self, buffer: bytes, position: int, header: int) -> tuple[MessageDefinition, int]:
+        """解析 definition message 并返回新的游标位置。
+
+        参数:
+            buffer: FIT 文件完整字节内容。
+            position: 当前游标位置，指向 definition message 的保留字节之后。
+            header: 当前消息头字节。
+
+        返回:
+            消息定义对象以及解析结束后的游标位置。
+        """
+
         local_number = header & 0x0F
         architecture = buffer[position + 1]
         endian = ">" if architecture else "<"
@@ -186,6 +259,17 @@ class FitReader:
         position: int,
         definition: MessageDefinition,
     ) -> tuple[dict[int, Any], int]:
+        """按照消息定义读取一条 data message 的字段值。
+
+        参数:
+            buffer: FIT 文件完整字节内容。
+            position: 当前数据消息的起始游标。
+            definition: 对应的消息定义。
+
+        返回:
+            字段值映射以及读取后的新游标位置。
+        """
+
         values: dict[int, Any] = {}
         for field in definition.fields:
             raw = buffer[position : position + field.size]
@@ -194,6 +278,17 @@ class FitReader:
         return values, position
 
     def _decode_field(self, raw: bytes, field: FieldDefinition, endian: str) -> Any:
+        """将字段原始字节解码成 Python 值或值列表。
+
+        参数:
+            raw: 字段原始字节数据。
+            field: 当前字段定义。
+            endian: 当前消息定义使用的字节序。
+
+        返回:
+            解码后的标量、列表、字符串或原始字节。
+        """
+
         base_type = field.base_type & 0x1F | (field.base_type & 0x80)
         if base_type == 7:
             text = raw.split(b"\x00", 1)[0].decode("utf-8", errors="ignore").strip()
@@ -216,6 +311,17 @@ class FitReader:
         return values
 
     def _decode_scalar(self, raw: bytes, base_type: int, endian: str) -> Any:
+        """解码单个标量字段。
+
+        参数:
+            raw: 单个标量的原始字节。
+            base_type: FIT 基础类型编号。
+            endian: 当前消息定义使用的字节序。
+
+        返回:
+            解码后的标量值；若命中无效值则返回 None。
+        """
+
         if base_type == 0:
             value = raw[0]
         elif base_type == 1:
@@ -243,13 +349,41 @@ class FitReader:
         return value
 
     def _resolve_compressed_timestamp(self, previous_timestamp: int, header: int) -> int:
+        """根据压缩时间戳头字节恢复完整时间戳。
+
+        参数:
+            previous_timestamp: 同一 local message 上一条记录的完整时间戳。
+            header: 当前压缩时间戳消息头字节。
+
+        返回:
+            推导出的完整 FIT 时间戳秒数。
+        """
+
         candidate = (previous_timestamp & 0xFFFFFFE0) + (header & 0x1F)
         if candidate < previous_timestamp:
             candidate += 0x20
         return candidate
 
     def _fit_datetime(self, seconds_since_fit_epoch: int) -> datetime:
+        """将 FIT epoch 秒数转换为 UTC 时间对象。
+
+        参数:
+            seconds_since_fit_epoch: 相对 FIT epoch 的秒数。
+
+        返回:
+            对应的 UTC 时间。
+        """
+
         return FIT_EPOCH + timedelta(seconds=seconds_since_fit_epoch)
 
     def _datetime_to_fit(self, value: datetime) -> int:
+        """将时间对象转换为 FIT epoch 秒数。
+
+        参数:
+            value: 需要转换的时间对象。
+
+        返回:
+            相对 FIT epoch 的整数秒数。
+        """
+
         return int((value.astimezone(timezone.utc) - FIT_EPOCH).total_seconds())

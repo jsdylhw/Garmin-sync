@@ -1,0 +1,42 @@
+{
+  "input_fit": "/home/liuhaowen/codes/garmin_downloader/22321570804_ACTIVITY.fit",
+  "pause_count": 4,
+  "compressed_gap_seconds": 5.0,
+  "strategies": [
+    {
+      "strategy": "remove",
+      "removed_seconds": 134.0,
+      "normalized_record_count": 1414,
+      "diff_counts": {
+        "1.0": 1413
+      },
+      "first_timestamp": "2026-03-28T00:32:13+00:00",
+      "last_timestamp": "2026-03-28T00:55:46+00:00"
+    },
+    {
+      "strategy": "keep",
+      "removed_seconds": 0.0,
+      "normalized_record_count": 1414,
+      "diff_counts": {
+        "1.0": 1409,
+        "8.0": 1,
+        "13.0": 1,
+        "19.0": 1,
+        "98.0": 1
+      },
+      "first_timestamp": "2026-03-28T00:32:13+00:00",
+      "last_timestamp": "2026-03-28T00:58:00+00:00"
+    },
+    {
+      "strategy": "compress",
+      "removed_seconds": 118.0,
+      "normalized_record_count": 1414,
+      "diff_counts": {
+        "1.0": 1409,
+        "5.0": 4
+      },
+      "first_timestamp": "2026-03-28T00:32:13+00:00",
+      "last_timestamp": "2026-03-28T00:56:02+00:00"
+    }
+  ]
+}

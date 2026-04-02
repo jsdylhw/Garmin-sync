@@ -1,0 +1,40 @@
+{
+  "route_point_count": 1380,
+  "total_distance_m": 9093.1,
+  "total_duration_s": 1429.0,
+  "start_time": "2026-03-28T00:32:13+00:00",
+  "end_time": "2026-03-28T00:56:02+00:00",
+  "pause_strategy": "compress",
+  "removed_seconds": 118.0,
+  "sample_count": 200,
+  "first_route_point": {
+    "timestamp": "2026-03-28T00:32:13+00:00",
+    "elapsed_seconds": 0.0,
+    "distance_m": 0.0,
+    "latitude": 31.100061060860753,
+    "longitude": 121.02728543803096,
+    "altitude_m": -283.6,
+    "speed_mps": 2.536,
+    "source_index": 0
+  },
+  "last_route_point": {
+    "timestamp": "2026-03-28T00:56:02+00:00",
+    "elapsed_seconds": 1429.0,
+    "distance_m": 9093.1,
+    "latitude": 31.06866999529302,
+    "longitude": 120.97241146489978,
+    "altitude_m": 461.0,
+    "speed_mps": 2.532,
+    "source_index": 1379
+  },
+  "first_sample": {
+    "target_distance_m": 0.0,
+    "left_index": 0,
+    "right_index": 0,
+    "ratio": 0.0,
+    "latitude": 31.100061060860753,
+    "longitude": 121.02728543803096,
+    "altitude_m": -283.6,
+    "speed_mps": 2.536
+  }
+}

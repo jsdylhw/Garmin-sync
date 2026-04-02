@@ -1,0 +1,63 @@
+{
+  "input_fit": "/home/liuhaowen/codes/garmin_downloader/22321570804_ACTIVITY.fit",
+  "output_fit": "/home/liuhaowen/codes/garmin_downloader/fit_activity_transformer/output/22321570804_ACTIVITY_step6_transformed.fit",
+  "pause_strategy": "compress",
+  "compressed_gap_seconds": 5.0,
+  "speed_multiplier": 1.5,
+  "source_record_count": 1414,
+  "resampled_point_count": 954,
+  "output_record_count": 954,
+  "output_lap_count": 1,
+  "output_session_present": true,
+  "output_summary": {
+    "metadata": {
+      "file_type": 4,
+      "manufacturer": 1,
+      "product": 4061,
+      "serial_number": 3495748499,
+      "time_created": "2026-03-28T00:48:05+00:00",
+      "sport": null,
+      "sub_sport": null,
+      "start_time": "2026-03-28T00:32:13+00:00",
+      "local_start_time": "2026-03-28T00:32:13+00:00"
+    },
+    "record_count": 954,
+    "lap_count": 1,
+    "session": {
+      "start_time": "2026-03-28T00:32:13+00:00",
+      "total_elapsed_time_s": 952.667,
+      "total_timer_time_s": 952.667,
+      "total_distance_m": 9093.1,
+      "avg_speed_mps": 3.792,
+      "max_speed_mps": 3.844,
+      "avg_heart_rate": null,
+      "max_heart_rate": null,
+      "avg_power": null,
+      "max_power": null,
+      "total_ascent_m": 188.78,
+      "total_descent_m": 181.34,
+      "raw_fields": {
+        "start_time": 1143592333,
+        "total_elapsed_time_s": 952667,
+        "total_timer_time_s": 952667,
+        "total_distance_m": 909310,
+        "total_ascent_m": 18878,
+        "total_descent_m": 18134,
+        "enhanced_avg_speed_mps": 3792,
+        "enhanced_max_speed_mps": 3844
+      }
+    },
+    "first_record_time": "2026-03-28T00:32:13+00:00",
+    "last_record_time": "2026-03-28T00:48:05+00:00",
+    "first_record_distance_m": 0.0,
+    "last_record_distance_m": 9093.1,
+    "activity_fields": {
+      "total_timer_time_s": 952667,
+      "num_sessions": 1,
+      "type": 0,
+      "event": 26,
+      "event_type": 1,
+      "local_timestamp": "2026-03-28T00:32:13+00:00"
+    }
+  }
+}

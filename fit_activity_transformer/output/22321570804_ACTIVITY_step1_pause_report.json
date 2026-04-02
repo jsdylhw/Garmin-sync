@@ -1,0 +1,53 @@
+{
+  "pause_count": 4,
+  "pause_segments": [
+    {
+      "start_time": "2026-03-28T00:33:21+00:00",
+      "end_time": "2026-03-28T00:34:59+00:00",
+      "gap_seconds": 98.0,
+      "removed_seconds": 97,
+      "start_distance_m": 351.88,
+      "end_distance_m": 351.88,
+      "start_latitude": 31.101529821753502,
+      "start_longitude": 121.02952223271132,
+      "end_latitude": 31.10158053226769,
+      "end_longitude": 121.02952558547258
+    },
+    {
+      "start_time": "2026-03-28T00:47:28+00:00",
+      "end_time": "2026-03-28T00:47:47+00:00",
+      "gap_seconds": 19.0,
+      "removed_seconds": 18,
+      "start_distance_m": 5921.39,
+      "end_distance_m": 5921.39,
+      "start_latitude": 31.087644528597593,
+      "start_longitude": 120.97590638324618,
+      "end_latitude": 31.087622735649347,
+      "end_longitude": 120.97584276460111
+    },
+    {
+      "start_time": "2026-03-28T00:48:08+00:00",
+      "end_time": "2026-03-28T00:48:21+00:00",
+      "gap_seconds": 13.0,
+      "removed_seconds": 12,
+      "start_distance_m": 5962.28,
+      "end_distance_m": 5962.28,
+      "start_latitude": 31.087310928851366,
+      "start_longitude": 120.97576749511063,
+      "end_latitude": 31.087202047929168,
+      "end_longitude": 120.97585030831397
+    },
+    {
+      "start_time": "2026-03-28T00:53:24+00:00",
+      "end_time": "2026-03-28T00:53:32+00:00",
+      "gap_seconds": 8.0,
+      "removed_seconds": 7,
+      "start_distance_m": 7498.46,
+      "end_distance_m": 7498.46,
+      "start_latitude": 31.076653422787786,
+      "start_longitude": 120.98452113568783,
+      "end_latitude": 31.076574716717005,
+      "end_longitude": 120.98450143821537
+    }
+  ]
+}

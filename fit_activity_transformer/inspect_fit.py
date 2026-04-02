@@ -8,15 +8,21 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-SRC_ROOT = PROJECT_ROOT / "src"
-if str(SRC_ROOT) not in sys.path:
-    sys.path.insert(0, str(SRC_ROOT))
+REPO_ROOT = PROJECT_ROOT.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from fit_activity_transformer.parser.fit_message_mapper import FitMessageMapper
 from fit_activity_transformer.parser.fit_reader import FitReader
 
 
 def parse_args() -> argparse.Namespace:
+    """解析命令行参数。
+
+    返回:
+        包含输入 FIT 路径与输出目录的参数对象。
+    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument("input_fit", help="输入 FIT 文件路径")
     parser.add_argument(
@@ -28,10 +34,24 @@ def parse_args() -> argparse.Namespace:
 
 
 def write_json(path: Path, payload: dict) -> None:
+    """将字典写入 JSON 文件。
+
+    参数:
+        path: 输出文件路径。
+        payload: 待写入的字典数据。
+    """
+
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:
+    """将行数据写入 CSV 文件。
+
+    参数:
+        path: 输出文件路径。
+        rows: 待写入的行数据列表。
+    """
+
     if not rows:
         path.write_text("", encoding="utf-8")
         return
@@ -42,6 +62,16 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def build_html(summary: dict, rows: list[dict]) -> str:
+    """生成简易 HTML 可视化页面。
+
+    参数:
+        summary: 活动摘要字典。
+        rows: 逐点记录数据列表。
+
+    返回:
+        可直接写入文件的 HTML 字符串。
+    """
+
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -150,6 +180,8 @@ def build_html(summary: dict, rows: list[dict]) -> str:
 
 
 def main() -> None:
+    """执行 FIT 读取、摘要导出和可视化文件生成流程。"""
+
     args = parse_args()
     input_path = Path(args.input_fit)
     output_dir = Path(args.output_dir)

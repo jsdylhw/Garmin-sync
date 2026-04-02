@@ -1,0 +1,37 @@
+{
+  "pause_strategy": "compress",
+  "removed_seconds": 118.0,
+  "speed_multiplier": 1.5,
+  "source_point_count": 1380,
+  "resampled_point_count": 954,
+  "source_duration_s": 1429.0,
+  "target_duration_s": 952.666667,
+  "source_distance_m": 9093.1,
+  "target_distance_m": 9093.1,
+  "first_resampled_point": {
+    "timestamp": "2026-03-28T00:32:13+00:00",
+    "elapsed_seconds": 0.0,
+    "distance_m": 0.0,
+    "latitude": 31.100061060860753,
+    "longitude": 121.02728543803096,
+    "altitude_m": -283.6,
+    "speed_mps": 3.8040000000000003,
+    "source_elapsed_seconds": 0.0,
+    "source_left_index": 0,
+    "source_right_index": 0,
+    "distance_ratio": 0.0
+  },
+  "last_resampled_point": {
+    "timestamp": "2026-03-28T00:48:05.666667+00:00",
+    "elapsed_seconds": 952.666667,
+    "distance_m": 9093.1,
+    "latitude": 31.06866999529302,
+    "longitude": 120.97241146489978,
+    "altitude_m": 461.0,
+    "speed_mps": 3.798,
+    "source_elapsed_seconds": 1429.0,
+    "source_left_index": 1379,
+    "source_right_index": 1379,
+    "distance_ratio": 0.0
+  }
+}
